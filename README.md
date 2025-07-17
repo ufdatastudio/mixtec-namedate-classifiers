@@ -1,15 +1,14 @@
-
 # MIXTEC-CLASSIFIERS
 
 ## Prerequisites
 
 Before you begin, make sure that you have the following installed:
 
-- Python (preferably version 3.7 or higher)
-- Git
-- GPU drivers (if using GPU for training)
-- Huggingface credentials (for dataset access)
-- Git lfs: You might need this to ensure that the images downloaded from huggingface are not just references but actual files.
+- Python (preferably version 3.7 or higher)  
+- Git  
+- GPU drivers (if using GPU for training)  
+- Huggingface credentials (for dataset access)  
+- Git LFS: You might need this to ensure that the images downloaded from Huggingface are not just references but actual files.  
 
 ## Steps
 
@@ -59,10 +58,10 @@ python classification.py
 
 This script will:
 
-- Train the models on the image dataset.
-- Save the trained models in the `models` folder.
-- Export accuracy and loss curves.
-- Write precision, recall, and F1 score to a text file.
+- Train the models on the image dataset.  
+- Save the trained models in the `models` folder.  
+- Export accuracy and loss curves.  
+- Write precision, recall, and F1 score to a text file.  
 
 ## Sample Commands
 
@@ -92,3 +91,12 @@ python augment_images.py <path_to_your_image_dataset>
 ```bash
 python classification.py
 ```
+
+## Acknowledgements
+
+Special thanks to the following authors for helping with the code snippets to build vision Transformer classifiers:  
+
+- Daniel Bourke, *[pytorch-deep-learning](https://github.com/mrdbourke/pytorch-deep-learning/tree/main/going_modular)*  
+- Aarohi Singla, *[Image-Classification-Using-Vision-transformer](https://github.com/AarohiSingla/Image-Classification-Using-Vision-transformer/tree/main)*  
+
+We gratefully acknowledge their contributions to the open-source community.
