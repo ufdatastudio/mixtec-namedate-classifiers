@@ -20,7 +20,6 @@ from datetime import datetime
 from going_modular.going_modular.predictions import pred_and_plot_image
 
 # Config Setup
-# /home/gsalunke/toblue/mixtec/mixteclabeling
 
 train_dir = f'./sign_images/train'
 test_dir = f'./sign_images/test'
