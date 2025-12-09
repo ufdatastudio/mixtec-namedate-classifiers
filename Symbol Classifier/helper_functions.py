@@ -74,10 +74,10 @@ def accuracy_fn(y_true, y_pred):
 
 
 def print_train_time(start, end, device=None):
-    """Prints difference between start and end time.
+    """Logs difference between start and end time.
 
     Args:
-        start (float): Start time of computation (preferred in timeit format). 
+        start (float): Start time of computation (preferred in timeit format).
         end (float): End time of computation.
         device ([type], optional): Device that compute is running on. Defaults to None.
 
@@ -85,10 +85,8 @@ def print_train_time(start, end, device=None):
         float: time between start and end in seconds (higher is longer).
     """
     total_time = end - start
-    print(f"\nTrain time on {device}: {total_time:.3f} seconds")
+    logger.info(f"Train time on {device}: {total_time:.3f} seconds")
     return total_time
-
-import matplotlib.pyplot as plt
 
 def plot_loss_curves(results, filename_prefix="loss_curves"):
     """Plots training curves of a results dictionary and saves them to files.
@@ -149,13 +147,22 @@ from typing import List
 import torchvision
 
 
+def get_device():
+    """Returns the best available device (CUDA, MPS, or CPU)."""
+    if torch.cuda.is_available():
+        return "cuda"
+    elif torch.backends.mps.is_available():
+        return "mps"
+    return "cpu"
+
+
 def pred_and_plot_image(
     model: torch.nn.Module = None,
     model_path: str = None,
     image_path: str = None,
     class_names: List[str] = None,
     transform=None,
-    device: torch.device = "cuda" if torch.cuda.is_available() else "cpu",
+    device: torch.device = None,
 ):
     """Makes a prediction on a target image with a trained model and plots the image.
 
@@ -165,12 +172,14 @@ def pred_and_plot_image(
         image_path (str): filepath to target image.
         class_names (List[str], optional): different class names for target image. Defaults to None.
         transform (_type_, optional): transform of target image. Defaults to None.
-        device (torch.device, optional): target device to compute on. Defaults to "cuda" if torch.cuda.is_available() else "cpu".
-    
+        device (torch.device, optional): target device to compute on. Defaults to best available.
+
     Returns:
         Matplotlib plot of target image and model prediction as title.
     """
-    
+    if device is None:
+        device = get_device()
+
     # Load the model if not provided
     if model is None and model_path is not None:
         model = torch.load(model_path, map_location=device)
@@ -233,5 +242,7 @@ def set_seeds(seed: int=42):
     # Set the seed for general torch operations
     torch.manual_seed(seed)
     # Set the seed for CUDA torch operations (ones that happen on the GPU)
-    torch.cuda.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed(seed)
+    # MPS doesn't have a separate seed function; torch.manual_seed covers it
 

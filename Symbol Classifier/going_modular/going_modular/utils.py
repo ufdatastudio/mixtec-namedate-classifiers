@@ -1,8 +1,10 @@
 """
 Contains various utility functions for PyTorch model training and saving.
 """
-import torch
 from pathlib import Path
+
+import torch
+from loguru import logger
 
 def load_model(model_path, device):
     model = torch.load(model_path, map_location=device)
@@ -36,6 +38,6 @@ def save_model(model: torch.nn.Module,
     model_save_path = target_dir_path / model_name
 
     # Save the model state_dict()
-    print(f"[INFO] Saving model to: {model_save_path}")
+    logger.info(f"Saving model to: {model_save_path}")
     torch.save(obj=model,
              f=model_save_path)

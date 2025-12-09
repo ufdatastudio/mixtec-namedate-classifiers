@@ -1,13 +1,32 @@
 # MIXTEC-CLASSIFIERS
 
+Code repository for classifying Name-Date and Year figures in Mixtec Codices.
+
+## Citation
+
+If you use this code in your research, please cite our paper:
+
+```bibtex
+@article{salunke2025classifying,
+  title = {Classifying Name-Date and Year Figures in Mixtec Codices},
+  author = {Girish Salunke and Christopher Driggers-Ellis and Christan Grant},
+  year = {2025},
+  journal = {Anthology of Computers and the Humanities},
+  volume = {3},
+  pages = {1211--1219},
+  editor = {Taylor Arnold, Margherita Fantoli, and Ruben Ros},
+  doi = {10.63744/eNge3Gj1LSHb}
+}
+```
+
 ## Prerequisites
 
 Before you begin, make sure that you have the following installed:
 
-- Python (preferably version 3.7 or higher)  
-- Git  
-- GPU drivers (if using GPU for training)  
-- Huggingface credentials (for dataset access)  
+- [uv](https://docs.astral.sh/uv/) (Python package manager)
+- Git
+- GPU drivers (if using GPU for training)
+- Huggingface credentials (for dataset access)
 - Git LFS: You might need this to ensure that the images downloaded from Huggingface are not just references but actual files.  
 
 ## Steps
@@ -24,17 +43,19 @@ This will download the dataset to your local system.
 
 ### 2. Setting up the Python Environment
 
-To set up the required Python environment, use the provided `environment.yml` file. Note that you may need to adjust the file for the GPU version of PyTorch installed on your system. You can modify the `environment.yml` to match your installed CUDA version if necessary.
+Each project has its own `pyproject.toml` file with dependencies. Navigate to the project directory and sync the environment using uv:
 
-To create the environment, run:
+```bash
+cd "Name-Date Classifier"
+uv sync
+```
+
+This will create a virtual environment and install all dependencies.
+
+**Alternative (conda):** You can also use the provided `environment.yml` file. Note that you may need to adjust the file for the GPU version of PyTorch installed on your system.
 
 ```bash
 conda env create -f environment.yml
-```
-
-Once the environment is created, activate it with:
-
-```bash
 conda activate name-date
 ```
 
@@ -43,7 +64,7 @@ conda activate name-date
 Once the environment is set up, you can perform data augmentation on the images in the dataset. To do so, run the `augment_images.py` script and specify the folder path to your images dataset as a command-line argument:
 
 ```bash
-python augment_images.py <path_to_image_dataset>
+uv run python augment_images.py <path_to_image_dataset>
 ```
 
 This will perform data augmentation on the images and save the results in the same directory.
@@ -53,7 +74,7 @@ This will perform data augmentation on the images and save the results in the sa
 To train the classification model on the augmented dataset, run the `classification.py` script:
 
 ```bash
-python classification.py
+uv run python classification.py
 ```
 
 This script will:
@@ -76,20 +97,20 @@ Here is a summary of the commands you can run:
 2. Create and activate the Python environment:
 
 ```bash
-conda env create -f environment.yml
-conda activate <your_environment_name>
+cd "Name-Date Classifier"
+uv sync
 ```
 
 3. Perform data augmentation:
 
 ```bash
-python augment_images.py <path_to_your_image_dataset>
+uv run python augment_images.py <path_to_your_image_dataset>
 ```
 
 4. Train the model:
 
 ```bash
-python classification.py
+uv run python classification.py
 ```
 
 ## Acknowledgements

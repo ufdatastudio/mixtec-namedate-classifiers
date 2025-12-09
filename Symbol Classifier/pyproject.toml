@@ -1,0 +1,23 @@
+[project]
+name = "symbol-classifier"
+version = "0.1.0"
+description = "Symbol classifier for Mixtec codices"
+requires-python = ">=3.9"
+dependencies = [
+    "loguru",
+    "matplotlib",
+    "numpy",
+    "pillow",
+    "requests",
+    "scikit-learn",
+    "seaborn",
+    "tomli",
+    "torch",
+    "torchinfo",
+    "torchvision",
+    "tqdm",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

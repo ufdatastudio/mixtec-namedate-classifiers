@@ -12,8 +12,17 @@ from typing import List, Tuple
 
 from PIL import Image
 
+def get_device():
+    """Returns the best available device (CUDA, MPS, or CPU)."""
+    if torch.cuda.is_available():
+        return "cuda"
+    elif torch.backends.mps.is_available():
+        return "mps"
+    return "cpu"
+
+
 # Set device
-device = "cuda" if torch.cuda.is_available() else "cpu"
+device = get_device()
 
 # Predict on a target image with a target model
 # Function created in: https://www.learnpytorch.io/06_pytorch_transfer_learning/#6-make-predictions-on-images-from-the-test-set

@@ -18,8 +18,17 @@ LEARNING_RATE = 0.001
 train_dir = "data/pizza_steak_sushi/train"
 test_dir = "data/pizza_steak_sushi/test"
 
+def get_device():
+    """Returns the best available device (CUDA, MPS, or CPU)."""
+    if torch.cuda.is_available():
+        return "cuda"
+    elif torch.backends.mps.is_available():
+        return "mps"
+    return "cpu"
+
+
 # Setup target device
-device = "cuda" if torch.cuda.is_available() else "cpu"
+device = get_device()
 
 # Create transforms
 data_transform = transforms.Compose([

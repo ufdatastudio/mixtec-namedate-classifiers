@@ -1,14 +1,15 @@
 """
 Contains functions for training and testing a PyTorch model.
 """
-import torch
-from tqdm.auto import tqdm
+import os
 from typing import Dict, List, Tuple
-from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score
-import numpy as np
-import seaborn as sns
+
 import matplotlib.pyplot as plt
-import os 
+import seaborn as sns
+import torch
+from loguru import logger
+from sklearn.metrics import confusion_matrix, f1_score, precision_score, recall_score
+from tqdm.auto import tqdm 
 
 def train_step(model: torch.nn.Module, 
                dataloader: torch.utils.data.DataLoader, 
@@ -151,12 +152,12 @@ def train(model: torch.nn.Module,
                                                                loss_fn=loss_fn,
                                                                device=device)
 
-        print(
-          f"Epoch: {epoch + 1} | "
-          f"train_loss: {train_loss:.4f} | "
-          f"train_acc: {train_acc:.4f} | "
-          f"test_loss: {test_loss:.4f} | "
-          f"test_acc: {test_acc:.4f}"
+        logger.info(
+            f"Epoch: {epoch + 1} | "
+            f"train_loss: {train_loss:.4f} | "
+            f"train_acc: {train_acc:.4f} | "
+            f"test_loss: {test_loss:.4f} | "
+            f"test_acc: {test_acc:.4f}"
         )
 
         results["train_loss"].append(train_loss)

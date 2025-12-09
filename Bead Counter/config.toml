@@ -1,0 +1,40 @@
+# Configuration file for Bead Counter Classifier
+# Modify these values to customize training behavior
+
+[paths]
+# Directory containing training images
+train_dir = "./sign_images/train"
+
+# Directory containing test/validation images
+test_dir = "./sign_images/test"
+
+# Directory to save trained models
+model_dir = "models"
+
+[model]
+# ViT model input features (fixed for ViT-B-16)
+in_features = 768
+
+# Random seed for reproducibility
+seed = 42
+
+[training]
+# Number of training epochs
+epochs = 10
+
+# Batch size for training and evaluation
+batch_size = 32
+
+# Learning rate for Adam optimizer
+learning_rate = 1e-3
+
+[workers]
+# Number of data loader workers per device type
+cuda = 16
+mps = 8
+cpu = 6
+
+[classes]
+# Class names for the bead counter (numeric bead counts)
+# These should match the subdirectory names in train_dir and test_dir
+names = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "15"]
