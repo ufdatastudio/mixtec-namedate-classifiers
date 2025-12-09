@@ -2,6 +2,16 @@
 
 Code repository for classifying Name-Date and Year figures in Mixtec Codices.
 
+## Classifiers
+
+This repository contains three classifiers:
+
+| Classifier | Description | Classes |
+|------------|-------------|---------|
+| Bead Counter | Classifies bead counts in Mixtec manuscripts | 0-15 |
+| Name-Date Classifier | Distinguishes name-date vs year glyphs | 2 |
+| Symbol Classifier | Classifies 20 Mixtec day sign symbols | 20 |
+
 ## Citation
 
 If you use this code in your research, please cite our paper:
@@ -27,9 +37,69 @@ Before you begin, make sure that you have the following installed:
 - Git
 - GPU drivers (if using GPU for training)
 - Huggingface credentials (for dataset access)
-- Git LFS: You might need this to ensure that the images downloaded from Huggingface are not just references but actual files.  
+- Git LFS: You might need this to ensure that the images downloaded from Huggingface are not just references but actual files.
 
-## Steps
+## Quick Start (Experiment Runner)
+
+The `run_experiments.py` script automates the full pipeline for all classifiers.
+
+### Run All Experiments
+
+```bash
+# Download datasets, augment images, and train all classifiers
+uv run --with loguru --with tomli --with tomli-w python run_experiments.py --setup
+```
+
+### Run Without Setup (if datasets already downloaded)
+
+```bash
+uv run --with loguru --with tomli --with tomli-w python run_experiments.py
+```
+
+### Run Specific Classifiers
+
+```bash
+# Only Symbol Classifier
+uv run --with loguru --with tomli --with tomli-w python run_experiments.py --datasets symbol
+
+# Bead Counter and Name-Date only
+uv run --with loguru --with tomli --with tomli-w python run_experiments.py --datasets bead namedate
+```
+
+### Skip Steps
+
+```bash
+# Skip augmentation (use existing augmented data)
+uv run --with loguru --with tomli --with tomli-w python run_experiments.py --skip-augment
+
+# Only run training
+uv run --with loguru --with tomli --with tomli-w python run_experiments.py --only-train
+
+# Only run augmentation
+uv run --with loguru --with tomli --with tomli-w python run_experiments.py --only-augment
+```
+
+### Override Training Parameters
+
+```bash
+uv run --with loguru --with tomli --with tomli-w python run_experiments.py --epochs 20 --batch-size 64 --learning-rate 0.0001
+```
+
+### Dry Run
+
+Preview commands without executing:
+
+```bash
+uv run --with loguru --with tomli --with tomli-w python run_experiments.py --dry-run
+```
+
+### List Available Datasets
+
+```bash
+uv run --with loguru --with tomli --with tomli-w python run_experiments.py --list
+```
+
+## Manual Steps (Individual Classifiers)
 
 ### 1. Setting up the Image Dataset
 
@@ -84,34 +154,35 @@ This script will:
 - Export accuracy and loss curves.  
 - Write precision, recall, and F1 score to a text file.  
 
-## Sample Commands
+## Configuration
 
-Here is a summary of the commands you can run:
+Each classifier has a `config.toml` file with training parameters:
 
-1. Set up the dataset:
+```toml
+[training]
+epochs = 10
+batch_size = 32
+learning_rate = 0.001
 
-```bash
-./setup_dataset.sh
+[model]
+seed = 42
 ```
 
-2. Create and activate the Python environment:
+Command-line arguments to `run_experiments.py` override these settings temporarily during execution.
 
-```bash
-cd "Name-Date Classifier"
-uv sync
-```
+## Output
 
-3. Perform data augmentation:
+Training produces:
+- Model checkpoints in classifier directory
+- Training/validation metrics
+- Confusion matrices and classification reports
 
-```bash
-uv run python augment_images.py <path_to_your_image_dataset>
-```
+## Hardware Acceleration
 
-4. Train the model:
-
-```bash
-uv run python classification.py
-```
+The training script automatically detects:
+- Apple MPS (Metal Performance Shaders) on macOS
+- CUDA on NVIDIA GPUs
+- Falls back to CPU if neither available
 
 ## Acknowledgements
 
