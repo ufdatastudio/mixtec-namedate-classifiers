@@ -244,7 +244,7 @@ def run_augmentation(
         return False
 
     return run_command(
-        ["uv", "run", "python", "-m", "augment_images", str(image_dir)],
+        ["uv", "run", "python", "augment_images.py", str(image_dir)],
         cwd=classifier_dir,
         dry_run=dry_run,
         description=f"Running data augmentation on {image_dir}",
@@ -285,7 +285,7 @@ def run_training(
             logger.info("Applied training parameter overrides to config.toml")
 
         success = run_command(
-            ["uv", "run", "python", "-m", "classification"],
+            ["uv", "run", "python", "classification.py"],
             cwd=classifier_dir,
             dry_run=dry_run,
             description="Running model training",
