@@ -26,18 +26,10 @@ fi
 # Step 6: Delete the metadata.csv file (check if it exists)
 rm -f metadata.csv
 
-# Step 7: Define an array of keywords to use for folder creation and file categorization
-keywords=("1" "2" "3" "4" "5" "6" "7" "8" "9" "10" "11" "12")
-
-# Step 8: Create directories for each keyword inside train and test directories
-for keyword in "${keywords[@]}"; do
-  mkdir -p "train/$keyword" "test/$keyword"
-done
-
 # Set the percentage of files to go into the train set
 train_percentage=70  # Replace with the desired percentage
 
-# Step 9: Rename files ending in "-1.png" by removing "-1"
+# Step 7: Rename files ending in "-1.png" by removing "-1"
 for file in *-1.png; do
   if [[ -e $file ]]; then
     new_name=$(echo "$file" | sed 's/-1\.png$/.png/')
@@ -69,7 +61,7 @@ random_shuffle() {
   fi
 }
 
-# Step 10: Process files for Format 1
+# Step 8: Process files for Format 1
 for file in *.png; do
   class_number=$(extract_class_format1 "$file")
   if [[ $class_number =~ ^[0-9]+$ ]]; then
@@ -87,7 +79,7 @@ for file in *.png; do
   fi
 done
 
-# Step 11: Process remaining files for Format 2
+# Step 9: Process remaining files for Format 2
 for file in *.png; do
   class_number=$(extract_class_format2 "$file")
   if [[ $class_number =~ ^[0-9]+$ ]]; then
