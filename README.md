@@ -39,9 +39,11 @@ Before you begin, make sure that you have the following installed:
 - Huggingface credentials (for dataset access)
 - Git LFS: You might need this to ensure that the images downloaded from Huggingface are not just references but actual files.
 
+We recommend using a GPU or a lot of patience.
+
 ## Quick Start (Experiment Runner)
 
-The `run_experiments.py` script automates the full pipeline for all classifiers.
+The `run_experiments.py` script automates the full pipeline for all classifiers. You should still use the `./setup_dataset.sh` scripts in each folder to download the dataset first.
 
 ### Run All Experiments
 
@@ -109,7 +111,7 @@ To clone the dataset from Huggingface, use the following command. You will be pr
 ./setup_dataset.sh
 ```
 
-This will download the dataset to your local system.
+This will download the dataset to your local system. When the huggingface user name and password are requested, you should use your Huggingface user name and token (not your password). You can create a token in your Huggingface account settings.
 
 ### 2. Setting up the Python Environment
 
