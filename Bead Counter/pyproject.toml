@@ -8,7 +8,6 @@ dependencies = [
     "matplotlib",
     "numpy",
     "pillow",
-    "requests",
     "scikit-learn",
     "seaborn",
     "tomli",

@@ -1,111 +1,29 @@
-"""
+"""Helper functions for training visualization and reproducibility.
+
 MIT License
-
 Copyright (c) 2021 Daniel Bourke
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
 """
-import torch
+
 import matplotlib.pyplot as plt
-import numpy as np
-
-from torch import nn
-import os
-import zipfile
-from pathlib import Path
-import requests
-import os
+import torch
 
 
-# Plot linear data or training and test and predictions (optional)
-def plot_predictions(
-    train_data, train_labels, test_data, test_labels, predictions=None
-):
-    """
-  Plots linear training data and test data and compares predictions.
-  """
-    plt.figure(figsize=(10, 7))
-
-    # Plot training data in blue
-    plt.scatter(train_data, train_labels, c="b", s=4, label="Training data")
-
-    # Plot test data in green
-    plt.scatter(test_data, test_labels, c="g", s=4, label="Testing data")
-
-    if predictions is not None:
-        # Plot the predictions in red (predictions were made on the test data)
-        plt.scatter(test_data, predictions, c="r", s=4, label="Predictions")
-
-    # Show the legend
-    plt.legend(prop={"size": 14})
-
-
-# Calculate accuracy (a classification metric)
-def accuracy_fn(y_true, y_pred):
-    """Calculates accuracy between truth labels and predictions.
-
-    Args:
-        y_true (torch.Tensor): Truth labels for predictions.
-        y_pred (torch.Tensor): Predictions to be compared to predictions.
-
-    Returns:
-        [torch.float]: Accuracy value between y_true and y_pred, e.g. 78.45
-    """
-    correct = torch.eq(y_true, y_pred).sum().item()
-    acc = (correct / len(y_pred)) * 100
-    return acc
-
-
-def print_train_time(start, end, device=None):
-    """Logs difference between start and end time.
-
-    Args:
-        start (float): Start time of computation (preferred in timeit format).
-        end (float): End time of computation.
-        device ([type], optional): Device that compute is running on. Defaults to None.
-
-    Returns:
-        float: time between start and end in seconds (higher is longer).
-    """
-    total_time = end - start
-    logger.info(f"Train time on {device}: {total_time:.3f} seconds")
-    return total_time
-
-def plot_loss_curves(results, filename_prefix="loss_curves"):
+def plot_loss_curves(results: dict, filename_prefix: str = "loss_curves") -> None:
     """Plots training curves of a results dictionary and saves them to files.
 
     Args:
-        results (dict): dictionary containing list of values, e.g.
+        results: Dictionary containing list of values, e.g.
             {"train_loss": [...],
              "train_acc": [...],
              "test_loss": [...],
              "test_acc": [...]}
-        filename_prefix (str): prefix for the output files.
+        filename_prefix: Prefix for the output files.
     """
     loss = results["train_loss"]
     test_loss = results["test_loss"]
-
     accuracy = results["train_acc"]
     test_accuracy = results["test_acc"]
-
-    epochs = range(1, len(results["train_loss"])+1)
+    epochs = range(1, len(results["train_loss"]) + 1)
 
     plt.figure(figsize=(15, 7))
 
@@ -116,13 +34,9 @@ def plot_loss_curves(results, filename_prefix="loss_curves"):
     plt.title("Loss")
     plt.xlabel("Epochs")
     plt.legend()
-    # Set Y-axis to start at 0
     plt.ylim(0, max(max(loss), max(test_loss)) * 1.1)
-
-    # Save loss plot
     plt.savefig(f"{filename_prefix}_loss.png")
-    
-    # Clear the figure for the next plot
+
     plt.clf()
 
     # Plot accuracy
@@ -133,116 +47,17 @@ def plot_loss_curves(results, filename_prefix="loss_curves"):
     plt.xlabel("Epochs")
     plt.legend()
     plt.ylim(0, 1)
-
-    # Save accuracy plot
     plt.savefig(f"{filename_prefix}_accuracy.png")
 
-    # Close the figure
     plt.close()
 
 
-# Pred and plot image function from notebook 04
-# See creation: https://www.learnpytorch.io/04_pytorch_custom_datasets/#113-putting-custom-image-prediction-together-building-a-function
-from typing import List
-import torchvision
-
-
-def get_device():
-    """Returns the best available device (CUDA, MPS, or CPU)."""
-    if torch.cuda.is_available():
-        return "cuda"
-    elif torch.backends.mps.is_available():
-        return "mps"
-    return "cpu"
-
-
-def pred_and_plot_image(
-    model: torch.nn.Module = None,
-    model_path: str = None,
-    image_path: str = None,
-    class_names: List[str] = None,
-    transform=None,
-    device: torch.device = None,
-):
-    """Makes a prediction on a target image with a trained model and plots the image.
+def set_seeds(seed: int = 42) -> None:
+    """Sets random seeds for torch operations for reproducibility.
 
     Args:
-        model (torch.nn.Module, optional): trained PyTorch image classification model. Defaults to None.
-        model_path (str, optional): path to the model .pth file. Defaults to None.
-        image_path (str): filepath to target image.
-        class_names (List[str], optional): different class names for target image. Defaults to None.
-        transform (_type_, optional): transform of target image. Defaults to None.
-        device (torch.device, optional): target device to compute on. Defaults to best available.
-
-    Returns:
-        Matplotlib plot of target image and model prediction as title.
+        seed: Random seed to set. Defaults to 42.
     """
-    if device is None:
-        device = get_device()
-
-    # Load the model if not provided
-    if model is None and model_path is not None:
-        model = torch.load(model_path, map_location=device)
-    
-    if model is None:
-        raise ValueError("Model must be provided or model_path must be specified.")
-
-    # Ensure the model is on the target device
-    model.to(device)
-
-    # 1. Load in image and convert the tensor values to float32
-    target_image = torchvision.io.read_image(str(image_path)).type(torch.float32)
-
-    # 2. Divide the image pixel values by 255 to get them between [0, 1]
-    target_image = target_image / 255.0
-
-    # 3. Transform if necessary
-    if transform:
-        target_image = transform(target_image)
-
-    # 4. Turn on model evaluation mode and inference mode
-    model.eval()
-    with torch.inference_mode():
-        # Add an extra dimension to the image
-        target_image = target_image.unsqueeze(dim=0)
-
-        # Make a prediction on image with an extra dimension and send it to the target device
-        target_image_pred = model(target_image.to(device))
-
-    # 5. Convert logits -> prediction probabilities (using torch.softmax() for multi-class classification)
-    target_image_pred_probs = torch.softmax(target_image_pred, dim=1)
-
-    # 6. Convert prediction probabilities -> prediction labels
-    target_image_pred_label = torch.argmax(target_image_pred_probs, dim=1)
-
-    # 7. Plot the image alongside the prediction and prediction probability
-    plt.imshow(
-        target_image.squeeze().permute(1, 2, 0)
-    )  # make sure it's the right size for matplotlib
-    if class_names:
-        title = f"Pred: {class_names[target_image_pred_label.cpu()]}\nProb: {target_image_pred_probs.max().cpu():.3f}"
-    else:
-        title = f"Pred: {target_image_pred_label}\nProb: {target_image_pred_probs.max().cpu():.3f}"
-    plt.title(title)
-    plt.axis(False)
-    plt.show()
-
-# Example usage
-# pred_and_plot_image(model_path='path_to_your_model.pth',
-#                     image_path='some_image.jpeg',
-#                     class_names=["class_1", "class_2", "class_3"],
-#                     transform=torchvision.transforms.ToTensor())
-
-def set_seeds(seed: int=42):
-    """Sets random sets for torch operations.
-
-    Args:
-        seed (int, optional): Random seed to set. Defaults to 42.
-    """
-    # Set the seed for general torch operations
     torch.manual_seed(seed)
-    # Set the seed for CUDA torch operations (ones that happen on the GPU)
     if torch.cuda.is_available():
         torch.cuda.manual_seed(seed)
-    # MPS doesn't have a separate seed function; torch.manual_seed covers it
-

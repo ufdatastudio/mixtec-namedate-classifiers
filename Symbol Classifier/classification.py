@@ -13,8 +13,7 @@ from torch.utils.data import DataLoader
 from torchinfo import summary
 from torchvision import datasets, transforms
 
-from going_modular.going_modular import engine, utils
-from going_modular.going_modular.predictions import pred_and_plot_image
+from engine import engine, utils
 from helper_functions import plot_loss_curves, set_seeds
 
 # Load configuration from config.toml

@@ -38,3 +38,23 @@ cpu = 6
 # Class names for the bead counter (numeric bead counts)
 # These should match the subdirectory names in train_dir and test_dir
 names = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "15"]
+
+[augmentation]
+# Number of rotated versions to create per image
+num_rotations = 16
+
+# Rotation angles to sample from (degrees)
+rotation_angles = [15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165, 180, 195, 210, 225, 240, 255, 270, 285, 300, 315, 330, 345]
+
+# Brightness adjustment range [min, max]
+brightness_range = [0.8, 1.2]
+
+# Contrast adjustment range [min, max]
+contrast_range = [0.8, 1.2]
+
+# Color saturation range [min, max]
+color_range = [0.0, 2.0]
+
+# Mask size as fraction of image dimensions [min, max]
+mask_width_fraction = [0.125, 0.25]
+mask_height_fraction = [0.125, 0.25]
